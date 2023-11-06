@@ -207,12 +207,12 @@ with st.expander("Advanced Settings"):
         st.markdown("Running online: `True`. Advanced settings are disabled.")
         fuzz_ratio = st.slider("Similarity Fuzz Ratio", min_value=0, max_value=100, value=80, step=1, disabled=True)
         write_to_cache = st.checkbox("Write data to cache", value=False, disabled=True)
-        read_from_cache = st.checkbox("Read from cached lines", value=False, disabled=True)
+        read_from_cache = st.checkbox("Read from cached differences", value=True, disabled=True)
     if not running_online:
         st.markdown("Running online: `False`. Advanced settings enabled, proceed with caution")
         fuzz_ratio = st.slider("Similarity Fuzz Ratio", min_value=0, max_value=100, value=80, step=1, disabled=False)
         write_to_cache = st.checkbox("Write data to cache", value=False)
-        read_from_cache = st.checkbox("Read from cached lines", value=False)
+        read_from_cache = st.checkbox("Read from cached differences", value=True)
 
 if st.button("Find Differences", use_container_width=True):
     # if read_from_cache:
