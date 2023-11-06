@@ -164,7 +164,9 @@ def display_differences(differences_dict):
         st.divider()
         st.bar_chart(num_changes_df, x="Character", y="Number of Changes")
 
-
+st.set_page_config(
+        page_title="BG3 Patch Dialog Difference Tool"
+    )
 st.title("BG3 Patch Dialog Difference Tool")
 st.markdown("<sup><b>v0.1-beta1</b> | View source code, commit history: https://github.com/Invuska/bg3-dialogdiff</sup>",
             unsafe_allow_html=True)
