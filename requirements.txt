@@ -1,0 +1,8 @@
+pandas
+beautifulsoup4
+tqdm
+stqdm
+html2text
+fuzzywuzzy
+lxml
+
