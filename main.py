@@ -166,17 +166,21 @@ def display_differences(differences_dict):
 
 
 st.title("BG3 Patch Dialog Difference Tool")
-st.markdown("<sup>View source code, changelog, to-dos: https://github.com/Invuska/bg3-dialogdiff</sup>",
+st.markdown("<sup><b>v0.1-beta1</b> | View source code, commit history: https://github.com/Invuska/bg3-dialogdiff</sup>",
             unsafe_allow_html=True)
 
 with st.sidebar:
     st.header("Messages")
-    st.info("""This tool is still in development. Future updates may include sorting & filtering of results and 
-    uploading your own dialog files""", icon="ℹ️")
+    st.info("""This tool is in active development, as such in it's current form may seem bare-bones.""", icon="ℹ️")
 
-    st.warning("""If during "Found Differences" the loading bar seems stuck, please scroll to the bottom. A separate 
-            loading bar will appear there for a specific character. This behavior will change in the future to be more
-            user-friendly (it was just easy to do this way for now).""", icon="⚠️")
+    st.header("Current To-Dos")
+    st.info("""
+    - Add filtering and sorting options for "Found Differences"
+    - Showing full dialog trees (since there's no context right now).
+    - User processing - which will allow users to define their own settings such as fuzz ratio, etc. for similarity checks
+    - Add option to provide your own game files (likely in an offline version)
+    - Add potential graphing/summary options
+    """)
 
 
 patches = [v.replace("\\", '/').split('/')[1] for v in glob("data/*") if "Parser" not in v]
@@ -199,10 +203,12 @@ with st.expander("Advanced Settings"):
 
     if running_online:
         st.markdown("Running online: `True`. Advanced settings are disabled.")
+        fuzz_ratio = st.slider("Similarity Fuzz Ratio", min_value=0, max_value=100, value=80, step=1, disabled=True)
         write_to_cache = st.checkbox("Write data to cache", value=False, disabled=True)
         read_from_cache = st.checkbox("Read from cached lines", value=False, disabled=True)
     if not running_online:
         st.markdown("Running online: `False`. Advanced settings enabled, proceed with caution")
+        fuzz_ratio = st.slider("Similarity Fuzz Ratio", min_value=0, max_value=100, value=80, step=1, disabled=False)
         write_to_cache = st.checkbox("Write data to cache", value=False)
         read_from_cache = st.checkbox("Read from cached lines", value=False)
 
