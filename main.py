@@ -173,7 +173,7 @@ st.markdown("<sup><b>v0.1-beta1</b> | View source code, commit history: https://
 
 with st.sidebar:
     st.header("Messages")
-    st.info("""This tool is in active development, as such in it's current form may seem bare-bones.""", icon="ℹ️")
+    st.info("""This tool is in active development, as such in its current form may seem bare-bones.""", icon="ℹ️")
 
     st.header("Current To-Dos")
     st.info("""
