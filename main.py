@@ -177,8 +177,9 @@ with st.sidebar:
 
     st.header("Current To-Dos")
     st.info("""
+    - Showing the source filename for the new/changed line
     - Add filtering and sorting options for "Found Differences"
-    - Showing full dialog trees (since there's no context right now).
+    - Showing full dialog trees (since there's no context right now)
     - User processing - which will allow users to define their own settings such as fuzz ratio, etc. for similarity checks
     - Add option to provide your own game files (likely in an offline version)
     - Add potential graphing/summary options
@@ -228,6 +229,9 @@ if st.button("Find Differences", use_container_width=True):
     #     calculate_differences(former, latter)
     # calculate_differences(former, latter)
     former_patch_name, latter_patch_name = former_patch.split(" - ")[0], latter_patch.split(" - ")[0]
-    with open(f"cache/cd_{former_patch_name}-{latter_patch_name}.pkl", 'rb') as file:
-        differences_dict = pickle.load(file)
-        display_differences(differences_dict)
+    try:
+        with open(f"cache/cd_{former_patch_name}-{latter_patch_name}.pkl", 'rb') as file:
+            differences_dict = pickle.load(file)
+            display_differences(differences_dict)
+    except FileNotFoundError:
+        st.warning("Differences not found. If using Patch 5, currently only differences from Patch 4 to Patch 5 have been calculated. Differences from Patch 5 to other patches coming soon!")
