@@ -54,6 +54,8 @@ def read_patch_dialogs(patch_former, patch_latter, write_to_cache):
     st.divider()
     dialogue_files_former = list(glob(f"data/{patch_former}/**/*.html", recursive=True))
     dialogue_files_latter = list(glob(f"data/{patch_latter}/**/*.html", recursive=True))
+    dialogue_files_former.sort()
+    dialogue_files_latter.sort()
 
     former_lines_dict = defaultdict(set)
     latter_lines_dict = defaultdict(set)
@@ -93,7 +95,7 @@ def read_patch_dialogs(patch_former, patch_latter, write_to_cache):
 
     return former_lines_dict, latter_lines_dict
 
-
+# This code is currently unused as it is handled by the cache_files Jupyter notebook. One day this func will be used.
 def calculate_differences(former_lines_dict, latter_lines_dict):
     all_characters = set(list(former_lines_dict.keys()) + list(latter_lines_dict.keys()))
     num_changes_list = []
@@ -120,8 +122,8 @@ def display_differences(differences_dict):
 
     num_changes_list = []
     for character in differences_dict.keys():
-        new_lines = differences_dict[character]["new"]
-        changed_lines = differences_dict[character]["changed"]
+        new_lines = sorted(differences_dict[character]["new"], key=lambda x: x['fn'])
+        changed_lines = sorted(differences_dict[character]["changed"], key=lambda x: x['fn'])
         num_changes = len(new_lines) + len(changed_lines)
         if num_changes > 0:
             num_changes_list.append({"Character": character, "Number of Changes": num_changes})
@@ -133,19 +135,24 @@ def display_differences(differences_dict):
             with st.expander(expander_text):
                 if len(new_lines) > 0:
                     st.subheader("New Lines")
-                    for idx, line in enumerate(new_lines):
-                        index_col, line_col = st.columns([0.05, 0.95])
+                    for idx, line_info in enumerate(new_lines):
+                        fn, line = line_info["fn"].replace("data/", ''), line_info["line"]
+                        index_col, line_col, info_col = st.columns([0.05, 0.9, 0.05])
                         with index_col:
                             st.markdown(f"{idx + 1}.")
 
                         with line_col:
                             st.markdown(line)
 
+                        with info_col:
+                            st.button(label="ℹ️", help=fn, key=f"{character}_{idx}_n", disabled=True, use_container_width=True)
+
                 if len(changed_lines) > 0:
                     st.subheader("Changed Lines")
-                    for idx, values in enumerate(changed_lines):
-                        former_line, latter_line = values
-                        index_col, former_line_col, arrow_col, latter_line_col = st.columns([0.05, 0.45, 0.05, 0.45])
+                    for idx, lines_info in enumerate(changed_lines):
+                        fn, lines = lines_info["fn"].replace("data/", ''), lines_info["lines"]
+                        former_line, latter_line = lines
+                        index_col, former_line_col, arrow_col, latter_line_col, info_col = st.columns([0.05, 0.425, 0.05, 0.425, 0.05])
                         old_diff_text, new_diff_text = highlight_differences(former_line, latter_line)
                         with index_col:
                             st.markdown(f"{idx + 1}.")
@@ -159,6 +166,9 @@ def display_differences(differences_dict):
                         with latter_line_col:
                             st.write(f"{new_diff_text}", unsafe_allow_html=True)
 
+                        with info_col:
+                            st.button(label="ℹ️", help=fn, key=f"{character}_{idx}_c", disabled=True, use_container_width=True)
+
     num_changes_df = pd.DataFrame.from_dict(num_changes_list)
     with summary_container.container():
         st.divider()
@@ -168,16 +178,17 @@ st.set_page_config(
         page_title="BG3 Patch Dialog Difference Tool"
     )
 st.title("BG3 Patch Dialog Difference Tool")
-st.markdown("<sup><b>v0.1-beta1</b> | View source code, commit history: https://github.com/Invuska/bg3-dialogdiff</sup>",
+st.markdown("<sup><b>v0.2-beta1</b> | View source code, commit history: https://github.com/Invuska/bg3-dialogdiff</sup>",
             unsafe_allow_html=True)
 
 with st.sidebar:
     st.header("Messages")
-    st.info("""This tool is in active development, as such in its current form may seem bare-bones.""", icon="ℹ️")
+    st.info("""This tool is in active development, as such in its current form may seem barebones.""", icon="ℹ️")
+    st.error("**Disclaimer**: It goes without saying, but obviously expect some ***big spoilers*** when using this tool.", icon="⚠️")
 
     st.header("Current To-Dos")
     st.info("""
-    - Showing the source filename for the new/changed line
+    - ~Showing the source filename for the new/changed line~ ✅
     - Add filtering and sorting options for "Found Differences"
     - Showing full dialog trees (since there's no context right now)
     - User processing - which will allow users to define their own settings such as fuzz ratio, etc. for similarity checks
@@ -185,8 +196,11 @@ with st.sidebar:
     - Add potential graphing/summary options
     """)
 
+    st.markdown("<sup>Justice for Karlach ♥</sup>", unsafe_allow_html=True)
 
-patches = [v.replace("\\", '/').split('/')[1] for v in glob("data/*") if "Parser" not in v]
+
+patches = [v.replace("\\", '/').split('/')[1] for v in glob("data/*") if all(["Parser" not in v,
+                                                                                          "read_caches" not in v])]
 patches.sort()
 col1, col2 = st.columns(2)
 former_patch_index = 0
@@ -209,7 +223,7 @@ with st.expander("Advanced Settings"):
         fuzz_ratio = st.slider("Similarity Fuzz Ratio", min_value=0, max_value=100, value=80, step=1, disabled=True)
         write_to_cache = st.checkbox("Write data to cache", value=False, disabled=True)
         read_from_cache = st.checkbox("Read from cached differences", value=True, disabled=True)
-    if not running_online:
+    else:
         st.markdown("Running online: `False`. Advanced settings enabled, proceed with caution")
         fuzz_ratio = st.slider("Similarity Fuzz Ratio", min_value=0, max_value=100, value=80, step=1, disabled=False)
         write_to_cache = st.checkbox("Write data to cache", value=False)
@@ -234,4 +248,4 @@ if st.button("Find Differences", use_container_width=True):
             differences_dict = pickle.load(file)
             display_differences(differences_dict)
     except FileNotFoundError:
-        st.warning("Differences not found. If using Patch 5, currently only differences from Patch 4 to Patch 5 have been calculated. Differences from Patch 5 to other patches coming soon!")
+        st.warning("Differences not found. Please try refreshing this page.")
