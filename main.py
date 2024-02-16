@@ -178,11 +178,13 @@ st.set_page_config(
         page_title="BG3 Patch Dialog Difference Tool"
     )
 st.title("BG3 Patch Dialog Difference Tool")
+st.write("(I am aware Patch 6 got released, will update soon. Please see sidebar.)")
 st.markdown("<sup><b>v0.2-beta1</b> | View source code, commit history: https://github.com/Invuska/bg3-dialogdiff</sup>",
             unsafe_allow_html=True)
 
 with st.sidebar:
     st.header("Messages")
+    st.info("Patch 6: I will try to have Patch 6 changes pushed tomorrow, Feb 17 EST/Eastern Time US.")
     st.info("""This tool is in active development, as such in its current form may seem barebones.""", icon="ℹ️")
     st.error("**Disclaimer**: It goes without saying, but obviously expect some ***big spoilers*** when using this tool.", icon="⚠️")
 
