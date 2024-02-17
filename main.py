@@ -178,15 +178,30 @@ st.set_page_config(
         page_title="BG3 Patch Dialog Difference Tool"
     )
 st.title("BG3 Patch Dialog Difference Tool")
-st.write("(I am aware Patch 6 got released, will update soon. Please see sidebar.)")
-st.markdown("<sup><b>v0.2-beta1</b> | View source code, commit history: https://github.com/Invuska/bg3-dialogdiff</sup>",
+st.markdown("*Patch 6 is weird... see sidebar for details*")
+st.markdown("<sup><b>v0.3-beta1</b> | View source code, commit history: https://github.com/Invuska/bg3-dialogdiff</sup>",
             unsafe_allow_html=True)
 
 with st.sidebar:
     st.header("Messages")
-    st.info("Patch 6: I will try to have Patch 6 changes pushed tomorrow, Feb 17 EST/Eastern Time US.")
     st.info("""This tool is in active development, as such in its current form may seem barebones.""", icon="ℹ️")
     st.error("**Disclaimer**: It goes without saying, but obviously expect some ***big spoilers*** when using this tool.", icon="⚠️")
+    st.info("""This diff tool couldn't be done without roksik-dnd et al. .pak to dialog parser. See their work [here](https://www.tumblr.com/roksik-dnd/727481314781102080/bg3-datamined-dialogue-google-drive?source=share).""")
+
+    st.header("Patch 6")
+    st.info("""
+    I don't know if the dialog reading parser by roksik-dnd's anonymous contributor (which you may have seen are the exported .html files with the 
+    dialog trees that often get screenshotted) are capturing more info now. Somehow, there are lines for Jaheira in an Act 1 file? Is this something new that I don't know about? Or something left over from EA? 
+    I checked the file (you can too, since it has the filenames in the info portion of new/changed dialog) and the dialog does now exist in there where it previously didn't.
+    
+    Anyway, regardless if this is some actually new Patch 6 dialog or something left over... I don't know myself. 
+    There may be other instances of this, but because of that keep in mind that the dialog differences from Patch 6 compared to earlier
+    may be due to information that already existed but previously wasn't captured by roksik's (anonymous contributor) 
+    parser tool.
+    
+    So tl;dr maybe take some info with a grain of salt. Not sure it's new info, new things captured by the parser, or some
+    "bug."
+    """)
 
     st.header("Current To-Dos")
     st.info("""
